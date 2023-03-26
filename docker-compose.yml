@@ -9,8 +9,12 @@ services:
         db_user: ${DB_USER}
         db_password: ${DB_PASSWORD}
         db_port: ${DB_PORT}
-        db_data: ${DB_PGDATA_DIR}
+        db_pgdata: ${DB_PGDATA_DIR}
     container_name: db
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_MULTIPLE_DATABASES="${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}"
     restart: always
     networks:
       - app-net
@@ -31,7 +35,7 @@ services:
     container_name: odoo
     environment:
       - HOST=db
-      - USER=${DB_NAME}
+      - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
     restart: always
     ports:
