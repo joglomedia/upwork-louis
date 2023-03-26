@@ -1,0 +1,132 @@
+version: "3.9"
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-${DB_TYPE}
+      args:
+        db_name: ${DB_NAME}
+        db_user: ${DB_USER}
+        db_password: ${DB_PASSWORD}
+        db_port: ${DB_PORT}
+        db_data: ${DB_PGDATA_DIR}
+    container_name: db
+    restart: always
+    networks:
+      - app-net
+    volumes:
+      - db-data:${DB_INSIDE_VOLUME}
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: always
+    ports:
+      - ${ADMINER_PORT}:8080
+    networks:
+      - app-net
+    depends_on:
+      - db
+  odoo:
+    image: odoo:16.0
+    container_name: odoo
+    restart: always
+    ports:
+      # <Port exposed>:<Port running inside container>
+      - ${ODOO_PORT}:8069
+    networks:
+      - app-net
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
+      - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
+    depends_on:
+      - db
+  gitea:
+    image: gitea/gitea:1.19.0
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=${DB_TYPE}
+      - GITEA__database__HOST=db:${DB_PORT}
+      - GITEA__database__NAME=${GITEA_DB_NAME}
+      - GITEA__database__USER=${DB_USER}
+      - GITEA__database__PASSWD=${DB_PASSWORD}
+    restart: always
+    ports:
+      - ${GITEA_PORT}:3000
+      - 222:22
+    networks:
+      - app-net
+    volumes:
+      - gitea-data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
+  nextcloud:
+    image: nextcloud:26.0-fpm-alpine
+    container_name: nextcloud
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${NEXTCLOUD_DB_NAME}
+    restart: always
+    ports:
+      - ${NEXTCLOUD_PORT}:3000
+    networks:
+      - app-net
+    volumes:
+      - nextcloud-data:/var/www/html
+      - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
+    depends_on:
+      - db
+  wordpress:
+    #image: wordpress:6.1-fpm-alpine
+    image: ntninja/wordpress-postgresql # use Postgre for WordPress
+    container_name: wordpress
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=${DB_USER}
+      - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
+      - WORDPRESS_DB_NAME=${WP_DB_NAME}
+    restart: always
+    ports:
+      - ${WP_PORT}:80
+    networks:
+      - app-net
+    volumes:
+      - wordpress-data:/var/www/html
+    depends_on:
+      - db
+  # Ref: https://github.com/leangaurav/nginx_https_docker
+  nginx-proxy:
+    container_name: nginx-proxy
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - app-net
+    volumes:
+      - ${NGX_PROXY_CONFIG}:/config
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /tmp/acme_challenge:/tmp/acme_challenge
+networks:
+  app-net:
+    driver: bridge
+volumes:
+  db-data:
+    driver: local
+  odoo-data:
+    driver: local
+  gitea-data:
+    driver: local
+  nextcloud-data:
+    driver: local
+  wordpress-data:
+    driver: local
