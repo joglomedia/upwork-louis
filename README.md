@@ -21,6 +21,6 @@ docker rmi $(docker images -q)
 
 ## Ref
 
-- https://github.com/leangaurav/nginx_https_docker
-- https://github.com/MartinKaburu/docker-postgresql-multiple-databases
-- https://hub.docker.com/r/ntninja/wordpress-postgresql
+- <https://github.com/leangaurav/nginx_https_docker>
+- <https://github.com/MartinKaburu/docker-postgresql-multiple-databases>
+- <https://hub.docker.com/r/ntninja/wordpress-postgresql>

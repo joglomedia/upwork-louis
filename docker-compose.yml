@@ -4,12 +4,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-${DB_TYPE}
-      args:
-        db_name: ${DB_NAME}
-        db_user: ${DB_USER}
-        db_password: ${DB_PASSWORD}
-        db_port: ${DB_PORT}
-        db_pgdata: ${DB_PGDATA_DIR}
+      #args:
+      #  db_name: ${DB_NAME}
+      #  db_user: ${DB_USER}
+      #  db_password: ${DB_PASSWORD}
+      #  db_port: ${DB_PORT}
+      #  db_pgdata: ${DB_PGDATA_DIR}
     container_name: db
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -46,7 +46,7 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
+      #- ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       - db
@@ -108,7 +108,7 @@ services:
       - app-net
     volumes:
       - wordpress-data:/var/www/html
-      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
+      #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
     depends_on:
       - db
