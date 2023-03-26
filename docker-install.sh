@@ -18,6 +18,9 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 if [[ -n $(command -v docker)  ]]; then
-  sudo groupadd docker
+  if [[ -z $(getent group docker) ]]; then
+    sudo groupadd docker
+  fi
+
   sudo usermod -aG docker "${USER}"
 fi
