@@ -11,7 +11,7 @@ FROM postgres:15-alpine
 #ENV POSTGRES_PASSWORD=${db_password}
 #ENV PGDATA=${db_pgdata}
 
-COPY ./data/postgres/scripts/create-multiple-postgresql-databases.sh /docker-entrypoint-initdb.d/
+COPY ./scripts/create-multiple-postgresql-databases.sh /docker-entrypoint-initdb.d/
 
 RUN chmod +x /docker-entrypoint-initdb.d/create-multiple-postgresql-databases.sh
 

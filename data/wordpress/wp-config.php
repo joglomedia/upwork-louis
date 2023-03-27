@@ -23,7 +23,7 @@
 define( 'DB_NAME', 'wpdb' );
 
 /** Database username */
-define( 'DB_USER', 'pguser' );
+define( 'DB_USER', 'dbuser' );
 
 /** Database password */
 define( 'DB_PASSWORD', 'passwd12345' );
