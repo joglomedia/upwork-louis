@@ -49,7 +49,7 @@ services:
     image: odoo:16.0
     container_name: odoo
     environment:
-      - HOST=postgres:${POSTGRES_PORT}
+      - HOST=postgres
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
     restart: always
@@ -70,7 +70,7 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-      - GITEA__database__DB_TYPE=${DB_TYPE}
+      - GITEA__database__DB_TYPE=postgres
       - GITEA__database__HOST=postgres:${POSTGRES_PORT}
       - GITEA__database__NAME=${GITEA_DB_NAME}
       - GITEA__database__USER=${DB_USER}
@@ -91,7 +91,7 @@ services:
     image: nextcloud:26.0-fpm-alpine
     container_name: nextcloud
     environment:
-      - POSTGRES_HOST=postgres:${POSTGRES_PORT}
+      - POSTGRES_HOST=postgres
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${NEXTCLOUD_DB_NAME}
@@ -110,7 +110,7 @@ services:
     #image: ntninja/wordpress-postgresql # use Postgre for WordPress
     container_name: wordpress
     environment:
-      - WORDPRESS_DB_HOST=mariadb:${MYSQL_PORT}
+      - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_USER=${DB_USER}
       - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
       - WORDPRESS_DB_NAME=${WP_DB_NAME}
