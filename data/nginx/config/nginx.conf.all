@@ -1,22 +1,22 @@
 # http://nginx.org/en/docs/http/ngx_http_upstream_module.html#upstream
 upstream odoo_app {
-    server 127.0.0.1:8069    max_fails=3 fail_timeout=30s;
+    server odoo:8069    max_fails=3 fail_timeout=30s;
 }
 
 upstream wp_app {
-    server 127.0.0.1:8080    max_fails=3 fail_timeout=30s;
+    server wordpress:8080    max_fails=3 fail_timeout=30s;
 }
 
 upstream adminer_app {
-    server 127.0.0.1:8081    max_fails=3 fail_timeout=30s;
+    server adminer:8081    max_fails=3 fail_timeout=30s;
 }
 
 upstream gitea_app {
-    server 127.0.0.1:3000    max_fails=3 fail_timeout=30s;
+    server gitea:3000    max_fails=3 fail_timeout=30s;
 }
 
 upstream nextcloud_app {
-    server 127.0.0.1:3001    max_fails=3 fail_timeout=30s;
+    server nextcloud:3001    max_fails=3 fail_timeout=30s;
 }
 
 server {
