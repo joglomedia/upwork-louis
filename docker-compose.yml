@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  db:
+  postgres:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-${DB_TYPE}
@@ -9,18 +9,31 @@ services:
       #  db_user: ${DB_USER}
       #  db_password: ${DB_PASSWORD}
       #  db_port: ${DB_PORT}
-      #  db_pgdata: ${DB_PGDATA_DIR}
-    container_name: db
+      #  db_pgdata: ${POSTGRES_PGDATA_DIR}
+    container_name: postgres
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_MULTIPLE_DATABASES="${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}"
-      - PGDATA=${DB_PGDATA_DIR}
+      - PGDATA=${POSTGRES_PGDATA_DIR}
     restart: always
     networks:
       - app-net
     volumes:
-      - db-data:${DB_INSIDE_VOLUME}
+      - postgres-data:/var/lib/postgresql/data
+  mariadb:
+    image: yobasystems/alpine-mariadb
+    container_name: mariadb
+    environment:
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${WP_DB_NAME}
+    restart: always
+    networks:
+      - app-net
+    volumes:
+      - mysql-data:/var/lib/mysql
   adminer:
     image: adminer:latest
     container_name: adminer
@@ -30,12 +43,13 @@ services:
     networks:
       - app-net
     depends_on:
-      - db
+      - postgres
+      - mariadb
   odoo:
     image: odoo:16.0
     container_name: odoo
     environment:
-      - HOST=db
+      - HOST=postgres:${POSTGRES_PORT}
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
     restart: always
@@ -49,7 +63,7 @@ services:
       #- ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
-      - db
+      - postgres
   gitea:
     image: gitea/gitea:1.19.0
     container_name: gitea
@@ -57,7 +71,7 @@ services:
       - USER_UID=1000
       - USER_GID=1000
       - GITEA__database__DB_TYPE=${DB_TYPE}
-      - GITEA__database__HOST=db:${DB_PORT}
+      - GITEA__database__HOST=postgres:${POSTGRES_PORT}
       - GITEA__database__NAME=${GITEA_DB_NAME}
       - GITEA__database__USER=${DB_USER}
       - GITEA__database__PASSWD=${DB_PASSWORD}
@@ -72,12 +86,12 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - db
+      - postgres
   nextcloud:
     image: nextcloud:26.0-fpm-alpine
     container_name: nextcloud
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=postgres:${POSTGRES_PORT}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${NEXTCLOUD_DB_NAME}
@@ -90,13 +104,13 @@ services:
       - nextcloud-data:/var/www/html
       - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
     depends_on:
-      - db
+      - postgres
   wordpress:
-    #image: wordpress:6.1-fpm-alpine
-    image: ntninja/wordpress-postgresql # use Postgre for WordPress
+    image: wordpress:6.1-fpm-alpine
+    #image: ntninja/wordpress-postgresql # use Postgre for WordPress
     container_name: wordpress
     environment:
-      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_HOST=mariadb:${MYSQL_PORT}
       - WORDPRESS_DB_USER=${DB_USER}
       - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
       - WORDPRESS_DB_NAME=${WP_DB_NAME}
@@ -111,7 +125,7 @@ services:
       #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
     depends_on:
-      - db
+      - mariadb
   # Ref: https://github.com/leangaurav/nginx_https_docker
   nginx-proxy:
     container_name: nginx-proxy
@@ -132,7 +146,9 @@ networks:
   app-net:
     driver: bridge
 volumes:
-  db-data:
+  postgres-data:
+    driver: local
+  mysql-data:
     driver: local
   odoo-data:
     driver: local
