@@ -1,16 +1,34 @@
 # Readme
 
-## Build & start up
+## Build & start containers
 
 ```bash
 docker compose -f docker-compose.yml build
 docker compose -f docker-compose.yml up
 ```
 
-## Stop & remove
+or
+
+```bash
+docker compose -f docker-compose.yml up --build
+```
+
+start up and detach
+
+```bash
+docker compose -f docker-compose.yml up -d --build
+```
+
+## Stop & remove containers
 
 ```bash
 docker compose -f docker-compose.yml down
+```
+
+also remove volumes
+
+```bash
+docker compose -f docker-compose.yml down --volumes
 ```
 
 ## Remove images
