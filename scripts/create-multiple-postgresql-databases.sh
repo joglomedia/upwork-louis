@@ -5,23 +5,23 @@ function create_user_and_database() {
 	local role=$(echo $1 | tr ':' ' ' | awk  '{print $2}')
 	echo "Creating user '${role}' and database '${database}'..."
 	psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" <<-PGSQL
-		DO $do1$
-		BEGIN
+		DO
+		$do1$
 			IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '${role}') THEN
 				RAISE NOTICE 'Role "${role}" already exists. Skipping.';
 			ELSE
 				CREATE ROLE ${role} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
 			END IF;
-		END $do1$;
+		$do1$;
 
-		DO $do2$
-		BEGIN
+		DO
+		$do2$
 			IF EXISTS (SELECT 1 FROM pg_database WHERE datname = '${database}') THEN
 				RAISE NOTICE 'Database "${database}" already exists. Skipping.';
 			ELSE
 				CREATE DATABASE ${database};
 			END IF;
-		END $do2$;
+		$do2$;
 
 		GRANT ALL PRIVILEGES ON DATABASE "${database}" TO "${role}";
 PGSQL
