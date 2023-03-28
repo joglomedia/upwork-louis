@@ -14,7 +14,6 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
       - POSTGRES_MULTIPLE_DATABASES=${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}
       - PGDATA=${POSTGRES_PGDATA_DIR}
     restart: always
