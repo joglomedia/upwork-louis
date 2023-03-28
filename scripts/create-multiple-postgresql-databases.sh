@@ -5,7 +5,7 @@ function create_user_and_database() {
 	local role=$(echo $1 | tr ':' ' ' | awk  '{print $2}')
 	echo "Creating user '${role}' and database '${database}'..."
 	psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" <<-PGSQL
-		DO $do$
+		DO $$
 		BEGIN
 			IF EXISTS (
 				SELECT FROM pg_catalog.pg_roles 
@@ -23,8 +23,7 @@ function create_user_and_database() {
 			ELSE
 				CREATE DATABASE ${database};
 			END IF;
-		END
-		$do$;
+		END $$;
 
 		GRANT ALL PRIVILEGES ON DATABASE "${database}" TO "${role}";
 PGSQL
