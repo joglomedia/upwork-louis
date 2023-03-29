@@ -14,7 +14,7 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      #- POSTGRES_DB=${POSTGRES_DB_NAME}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
       - POSTGRES_MULTIPLE_DATABASES=${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}
       - PGDATA=${POSTGRES_PGDATA_DIR}
     restart: always
@@ -22,6 +22,12 @@ services:
       - app-net
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    command: postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c random_page_cost=1.0
+    healthcheck:
+      test: psql -U ${DB_USER} -d ${POSTGRES_DB_NAME} -c "SELECT 1;"
+      interval: 5s
+      timeout: 5s
+      retries: 5
   mariadb:
     image: yobasystems/alpine-mariadb
     container_name: mariadb
