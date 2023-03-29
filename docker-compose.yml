@@ -75,8 +75,8 @@ services:
       - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
-      - postgres
-      - mariadb
+      postgres:
+        condition: service_healthy
   gitea:
     image: gitea/gitea:1.19.0
     container_name: gitea
@@ -101,8 +101,8 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - postgres
-      - mariadb
+      postgres:
+        condition: service_healthy
   nextcloud:
     image: nextcloud:26.0-fpm-alpine
     container_name: nextcloud
@@ -122,8 +122,8 @@ services:
       - nextcloud-data:/var/www/html
       - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
     depends_on:
-      - postgres
-      - mariadb
+      postgres:
+        condition: service_healthy
   wordpress:
     image: wordpress:6.1-fpm-alpine
     #image: ntninja/wordpress-postgresql # use Postgre for WordPress
@@ -145,8 +145,8 @@ services:
       #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
     depends_on:
-      - postgres
-      - mariadb
+      mariadb:
+        condition: service_healthy
   # Ref: https://github.com/leangaurav/nginx_https_docker
   nginx-proxy:
     container_name: nginx-proxy
@@ -163,6 +163,12 @@ services:
       - ${NGX_PROXY_CONFIG}:/config
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /tmp/acme_challenge:/tmp/acme_challenge
+    depends_on:
+      - adminer
+      - odoo
+      - wordpress
+      - gitea
+      - nextcloud
 networks:
   app-net:
     driver: bridge
