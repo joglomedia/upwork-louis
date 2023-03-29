@@ -8,7 +8,7 @@ services:
         db_name: ${POSTGRES_DB_NAME}
         db_user: ${DB_USER}
         db_password: ${DB_PASSWORD}
-        db_port: ${DB_PORT}
+        db_port: ${POSTGRES_PORT}
         db_pgdata: ${POSTGRES_PGDATA_DIR}
     container_name: postgres
     environment:
