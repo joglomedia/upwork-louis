@@ -6,6 +6,7 @@ services:
       dockerfile: ./docker/Dockerfile-${DB_TYPE}
       args:
         db_name: ${POSTGRES_DB_NAME}
+        db_name_multiple: ${POSTGRES_MULTIPLE_DATABASES}
         db_user: ${DB_USER}
         db_password: ${DB_PASSWORD}
         db_port: ${POSTGRES_PORT}

@@ -1,21 +1,21 @@
 # http://nginx.org/en/docs/http/ngx_http_upstream_module.html#upstream
-upstream odoo_app {
+upstream odoo {
     server odoo:8069    max_fails=3 fail_timeout=30s;
 }
 
-upstream wp_app {
+upstream wordpress-fpm {
     server wordpress:8082    max_fails=3 fail_timeout=30s;
 }
 
-upstream adminer_app {
+upstream adminer {
     server adminer:8081    max_fails=3 fail_timeout=30s;
 }
 
-upstream gitea_app {
+upstream gitea {
     server gitea:3000    max_fails=3 fail_timeout=30s;
 }
 
-upstream nextcloud_app {
+upstream nextcloud-fpm {
     server nextcloud:3001    max_fails=3 fail_timeout=30s;
 }
 
@@ -58,7 +58,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/dc.masedi.net/privkey.pem;
 
     location / {
-        proxy_pass http://odoo_app;
+        proxy_pass http://odoo;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
         #proxy_redirect off;
@@ -70,7 +70,7 @@ server {
     #}
 
     location /dbadmin {
-        proxy_pass http://adminer_app;
+        proxy_pass http://adminer;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
         #proxy_redirect off;
@@ -110,7 +110,7 @@ server {
         fastcgi_param PATH_INFO       $fastcgi_path_info;
         fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
 
-        fastcgi_pass   wordpress:8082;
+        fastcgi_pass   wordpress-fpm;
     }
 
     location ~ /.well-known/acme-challenge {
@@ -119,7 +119,7 @@ server {
     }
 
     location /dbadmin {
-        proxy_pass http://adminer_app;
+        proxy_pass http://adminer;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
         #proxy_redirect off;
