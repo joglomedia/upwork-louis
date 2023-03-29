@@ -27,7 +27,8 @@ services:
       test: psql -U ${DB_USER} -d ${POSTGRES_DB_NAME} -c "SELECT 1;"
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 5s
   mariadb:
     image: yobasystems/alpine-mariadb
     container_name: mariadb
@@ -41,6 +42,12 @@ services:
       - app-net
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: mysql -u ${DB_USER} --password=${DB_PASSWORD} --execute "SHOW DATABASES;"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
     depends_on:
       - postgres
   adminer:
