@@ -4,12 +4,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-${DB_TYPE}
-      #args:
-      #  db_name: ${DB_NAME}
-      #  db_user: ${DB_USER}
-      #  db_password: ${DB_PASSWORD}
-      #  db_port: ${DB_PORT}
-      #  db_pgdata: ${POSTGRES_PGDATA_DIR}
+      args:
+        db_name: ${POSTGRES_DB_NAME}
+        db_user: ${DB_USER}
+        db_password: ${DB_PASSWORD}
+        db_port: ${DB_PORT}
+        db_pgdata: ${POSTGRES_PGDATA_DIR}
     container_name: postgres
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -56,6 +56,8 @@ services:
       - PORT=${POSTGRES_PORT}
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
+    links:
+      - postgres
     restart: always
     ports:
       # <Port exposed>:<Port running inside container>
@@ -80,6 +82,8 @@ services:
       - GITEA__database__NAME=${GITEA_DB_NAME}
       - GITEA__database__USER=${DB_USER}
       - GITEA__database__PASSWD=${DB_PASSWORD}
+    links:
+      - postgres
     restart: always
     ports:
       - ${GITEA_PORT}:3000
@@ -101,6 +105,8 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${NEXTCLOUD_DB_NAME}
+    links:
+      - postgres
     restart: always
     ports:
       - ${NEXTCLOUD_PORT}:3000
@@ -117,11 +123,12 @@ services:
     #image: ntninja/wordpress-postgresql # use Postgre for WordPress
     container_name: wordpress
     environment:
-      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_HOST=mariadb:${MYSQL_PORT}
       - WORDPRESS_DB_USER=${DB_USER}
       - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
       - WORDPRESS_DB_NAME=${WP_DB_NAME}
-      - WORDPRESS_DEBUG=true
+    links:
+      - mariadb
     restart: always
     ports:
       - ${WP_PORT}:80
