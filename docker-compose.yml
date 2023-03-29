@@ -43,7 +43,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: mysql -u ${DB_USER} --password=${DB_PASSWORD} --execute "SHOW DATABASES;"
+      test: mysql -h mariadb -u ${DB_USER} -p${DB_PASSWORD} --execute "SHOW DATABASES;"
       interval: 5s
       timeout: 5s
       retries: 10
@@ -149,7 +149,7 @@ services:
       - app-net
     volumes:
       - wordpress-data:/var/www/html
-      #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
+      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
     depends_on:
       mariadb:
