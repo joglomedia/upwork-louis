@@ -6,7 +6,7 @@ function create_user_and_database() {
 	echo "Creating user '${role}' and database '${database}'..."
 	psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" <<-PGSQL
 		CREATE ROLE ${role} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
-		CREATE DATABASE '${database}';
+		CREATE DATABASE ${database};
 		GRANT ALL PRIVILEGES ON DATABASE '${database}' TO '${role}';
 PGSQL
 }

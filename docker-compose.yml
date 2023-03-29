@@ -14,6 +14,7 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
       - POSTGRES_MULTIPLE_DATABASES=${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}
       - PGDATA=${POSTGRES_PGDATA_DIR}
     restart: always
@@ -50,6 +51,7 @@ services:
     container_name: odoo
     environment:
       - HOST=postgres
+      - PORT=${POSTGRES_PORT}
       - USER=${DB_USER}
       - PASSWORD=${DB_PASSWORD}
     restart: always
@@ -60,7 +62,7 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      #- ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
+      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       - postgres
@@ -114,7 +116,7 @@ services:
       - WORDPRESS_DB_USER=${DB_USER}
       - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
       - WORDPRESS_DB_NAME=${WP_DB_NAME}
-      - WORDPRESS_DEBUG=1
+      - WORDPRESS_DEBUG=true
     restart: always
     ports:
       - ${WP_PORT}:80
