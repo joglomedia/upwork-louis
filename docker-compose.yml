@@ -14,7 +14,7 @@ services:
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB_NAME}
+      #- POSTGRES_DB=${POSTGRES_DB_NAME}
       - POSTGRES_MULTIPLE_DATABASES=${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}
       - PGDATA=${POSTGRES_PGDATA_DIR}
     restart: always
@@ -35,6 +35,8 @@ services:
       - app-net
     volumes:
       - mysql-data:/var/lib/mysql
+    depends_on:
+      - postgres
   adminer:
     image: adminer:latest
     container_name: adminer
@@ -62,10 +64,11 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo
+      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       - postgres
+      - mariadb
   gitea:
     image: gitea/gitea:1.19.0
     container_name: gitea
@@ -89,6 +92,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - postgres
+      - mariadb
   nextcloud:
     image: nextcloud:26.0-fpm-alpine
     container_name: nextcloud
@@ -107,6 +111,7 @@ services:
       - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
     depends_on:
       - postgres
+      - mariadb
   wordpress:
     image: wordpress:6.1-fpm-alpine
     #image: ntninja/wordpress-postgresql # use Postgre for WordPress
@@ -127,6 +132,7 @@ services:
       #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
     depends_on:
+      - postgres
       - mariadb
   # Ref: https://github.com/leangaurav/nginx_https_docker
   nginx-proxy:
