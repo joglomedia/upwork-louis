@@ -4,7 +4,7 @@ upstream odoo_app {
 }
 
 upstream wp_app {
-    server wordpress:8080    max_fails=3 fail_timeout=30s;
+    server wordpress:8082    max_fails=3 fail_timeout=30s;
 }
 
 upstream adminer_app {
@@ -38,7 +38,11 @@ server {
     listen 80;
     listen [::]:80;
     server_name dc2.masedi.net;
-    
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+
     location ~ /.well-known/acme-challenge {
         allow all;
         root /tmp/acme_challenge;
@@ -82,17 +86,37 @@ server {
     ssl_certificate /etc/letsencrypt/live/dc2.masedi.net/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/dc2.masedi.net/privkey.pem;
 
+    root /var/www/html;
+    index index.php;
+
     location / {
-        proxy_pass http://wp_app;
-        #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        #proxy_set_header Host $host;
-        #proxy_redirect off;
-        include ./proxy_params;
+        try_files $uri $uri/ /index.php?$args;
     }
 
-    #location /static/ {
-    #    alias /static/;
-    #}
+    # Add a trailing slash to /wp-admin
+    location /wp-admin {
+        rewrite ^/wp-admin$ /wp-admin/ redirect;
+    }
+
+    ## Pass the PHP scripts to FastCGI server listening on Unix socket.
+    location ~ \.php$ {
+        try_files \$uri =404;
+
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_index index.php;
+
+        include ./fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+
+        fastcgi_pass   wordpress:8082;
+    }
+
+    location ~ /.well-known/acme-challenge {
+        allow all;
+        root /tmp/acme_challenge;
+    }
 
     location /dbadmin {
         proxy_pass http://adminer_app;
