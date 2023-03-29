@@ -83,7 +83,7 @@ services:
     restart: always
     ports:
       - ${GITEA_PORT}:3000
-      - 222:22
+      - ${GITEA_SSH_PORT}:22
     networks:
       - app-net
     volumes:
