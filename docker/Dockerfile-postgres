@@ -1,4 +1,4 @@
-FROM postgres:15-alpine
+FROM postgres:14.7-alpine
 
 ARG db_name
 ARG db_name_multiple

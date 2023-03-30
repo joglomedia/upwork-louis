@@ -80,7 +80,7 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
+      #- ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       postgres:

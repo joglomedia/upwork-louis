@@ -84,8 +84,8 @@ server {
     #    alias /static/;
     #}
 
-    location /dbadmin {
-        proxy_pass http://adminer.app;
+    location ~ /dbadmin(.*)$ {
+        proxy_pass http://adminer.app$1;
         include /etc/nginx/conf.d/proxy_params;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
@@ -123,8 +123,8 @@ server {
     #    alias /static/;
     #}
 
-    location /dbadmin {
-        proxy_pass http://adminer.app;
+    location ~ /dbadmin(.*)$ {
+        proxy_pass http://adminer.app$1;
         include /etc/nginx/conf.d/proxy_params;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
@@ -176,8 +176,8 @@ server {
         fastcgi_param PATH_INFO $fastcgi_path_info;
     }
 
-    location /dbadmin {
-        proxy_pass http://adminer.app;
+    location ~ /dbadmin(.*)$ {
+        proxy_pass http://adminer.app$1;
         include /etc/nginx/conf.d/proxy_params;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
@@ -227,8 +227,8 @@ server {
         rewrite ^/wp-admin$ /wp-admin/ redirect;
     }
 
-    location /dbadmin {
-        proxy_pass http://adminer.app;
+    location ~ /dbadmin(.*)$ {
+        proxy_pass http://adminer.app$1;
         include /etc/nginx/conf.d/proxy_params;
         #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         #proxy_set_header Host $host;
