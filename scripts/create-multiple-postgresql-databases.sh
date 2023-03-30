@@ -1,16 +1,21 @@
 #!/bin/bash
 
 function create_user_and_database() {
-	local database=$(echo $1 | tr ':' ' ' | awk  '{print $1}')
-	local role=$(echo $1 | tr ':' ' ' | awk  '{print $2}')
+	local MDB_DB_NAME=$(echo $1 | tr ':' ' ' | awk  '{print $1}')
+	local MDB_ROLE=$(echo $1 | tr ':' ' ' | awk  '{print $2}')
+	local MDB_PASSWORD=$(echo $1 | tr ':' ' ' | awk  '{print $3}')
 
-	echo "Creating user '${role}' and database '${database}'..."
+	if [[ "${MDB_PASSWORD}x" == "x" ]]; then
+		MDB_PASSWORD="${POSTGRES_PASSWORD}"
+	fi
 
-	# CREATE ROLE ${role} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
+	echo "Creating user '${MDB_ROLE}' and database '${MDB_DB_NAME}' with pass '${MDB_PASSWORD}..."
+
+	# CREATE ROLE ${MDB_ROLE} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
 	psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" <<-PGSQL
-		CREATE ROLE ${role} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
-		CREATE DATABASE ${database};
-		GRANT ALL PRIVILEGES ON DATABASE ${database} TO ${role};
+		CREATE ROLE ${MDB_ROLE} LOGIN PASSWORD '${MDB_PASSWORD}';
+		CREATE DATABASE ${MDB_DB_NAME};
+		GRANT ALL PRIVILEGES ON DATABASE ${MDB_DB_NAME} TO ${MDB_ROLE};
 PGSQL
 }
 

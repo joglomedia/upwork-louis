@@ -1,17 +1,17 @@
-FROM postgres:14.7-alpine
+FROM postgres:14-alpine
 
-ARG db_name
+#ARG db_name
 ARG db_name_multiple
-ARG db_user=postgres
-ARG db_password=postgres
-ARG db_port=5432
-ARG db_pgdata=/var/lib/postgresql/data/pgdata
+#ARG db_user=postgres
+#ARG db_password=postgres
+#ARG db_port=5432
+#ARG db_pgdata=/var/lib/postgresql/data/pgdata
 
-ENV POSTGRES_DB=${db_name}
+#ENV POSTGRES_DB=${db_name}
 ENV POSTGRES_MULTIPLE_DATABASES=${db_name_multiple}
-ENV POSTGRES_USER=${db_user}
-ENV POSTGRES_PASSWORD=${db_password}
-ENV PGDATA=${db_pgdata}
+#ENV POSTGRES_USER=${db_user}
+#ENV POSTGRES_PASSWORD=${db_password}
+#ENV PGDATA=${db_pgdata}
 
 COPY ./scripts/create-multiple-postgresql-databases.sh /docker-entrypoint-initdb.d/
 
