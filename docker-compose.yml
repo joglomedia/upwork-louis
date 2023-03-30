@@ -7,13 +7,13 @@ services:
       args:
         db_name: ${POSTGRES_DB_NAME}
         db_name_multiple: ${POSTGRES_MULTIPLE_DATABASES}
-        db_user: ${DB_USER}
+        db_user: ${POSTGRES_DB_USER}
         db_password: ${DB_PASSWORD}
         db_port: ${POSTGRES_PORT}
         db_pgdata: ${POSTGRES_PGDATA_DIR}
     container_name: postgres
     environment:
-      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_USER=${POSTGRES_DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB_NAME}
       - POSTGRES_MULTIPLE_DATABASES=${ODOO_DB_NAME}:${DB_USER}; ${GITEA_DB_NAME}:${DB_USER}; ${NEXTCLOUD_DB_NAME}:${DB_USER}; ${WP_DB_NAME}:${DB_USER}
@@ -68,7 +68,7 @@ services:
     environment:
       - HOST=postgres
       - PORT=${POSTGRES_PORT}
-      - USER=${DB_USER}
+      - USER=${POSTGRES_DB_USER}
       - PASSWORD=${DB_PASSWORD}
     links:
       - postgres
@@ -80,7 +80,7 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      - ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
+      #- ${ODOO_OUTSIDE_CONFIG}:/etc/odoo/odoo.conf
       - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       postgres:
@@ -94,7 +94,7 @@ services:
       - GITEA__database__DB_TYPE=postgres
       - GITEA__database__HOST=postgres:${POSTGRES_PORT}
       - GITEA__database__NAME=${GITEA_DB_NAME}
-      - GITEA__database__USER=${DB_USER}
+      - GITEA__database__USER=${POSTGRES_DB_USER}
       - GITEA__database__PASSWD=${DB_PASSWORD}
     links:
       - postgres
@@ -116,7 +116,7 @@ services:
     container_name: nextcloud
     environment:
       - POSTGRES_HOST=postgres
-      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_USER=${POSTGRES_DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${NEXTCLOUD_DB_NAME}
     links:
