@@ -3,7 +3,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-${DB_TYPE}
+      dockerfile: ./docker/Dockerfile-postgres
       args:
         #db_name: ${POSTGRES_DB_NAME}
         db_name_multiple: ${POSTGRES_MULTIPLE_DATABASES}
