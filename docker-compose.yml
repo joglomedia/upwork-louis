@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  pgdb:
+  postgres:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-${DB_TYPE}
@@ -119,8 +119,8 @@ services:
     networks:
       - app-net
     volumes:
-      - nextcloud-data:/var/www/html
-      - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
+      - nextcloud-data:/var/www/html/nextcloud
+      - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/nextcloud/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -140,18 +140,18 @@ services:
     networks:
       - app-net
     volumes:
-      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
-      - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
-      - wordpress-data:/var/www/html
+      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wordpress/wp-config.php
+      - ${WP_OUTSIDE_CONTENT}:/var/www/html/wordpress/wp-content
+      - wordpress-data:/var/www/html/wordpress
     depends_on:
       mariadb:
         condition: service_healthy
   # Ref: https://github.com/leangaurav/nginx_https_docker
   nginx-proxy:
-    image: nginx:stable-alpine
-    #build:
-    #  context: .
-    #  dockerfile: ./docker/Dockerfile-nginx
+    #image: nginx:stable-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
     container_name: nginx-proxy
     restart: always
     ports:
@@ -164,6 +164,8 @@ services:
       - ${NGX_PROXY_CONF}:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /tmp/acme_challenge:/tmp/acme_challenge
+      - wordpress-data:/var/www/html/wordpress
+      - nextcloud-data:/var/www/html/nextcloud
     depends_on:
       - adminer
       - odoo

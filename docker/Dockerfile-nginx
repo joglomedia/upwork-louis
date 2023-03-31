@@ -4,3 +4,6 @@ FROM nginx:stable-alpine
 #COPY ./data/nginx/config/nginx.conf /etc/nginx/conf.d/
 #COPY ./data/nginx/config/proxy_params /etc/nginx/conf.d/
 #COPY ./data/nginx/config /etc/nginx/
+
+RUN mkdir -p /var/www/html/wordpress
+RUN mkdir -p /var/www/html/nextcloud
