@@ -75,7 +75,7 @@ services:
       - app-net
     volumes:
       - odoo-data:/var/lib/odoo
-      - ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
+      #- ${ODOO_OUTSIDE_ADDONS}:/mnt/extra-addons
     depends_on:
       postgres:
         condition: service_healthy
@@ -138,7 +138,7 @@ services:
     networks:
       - app-net
     volumes:
-      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
+      #- ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
       - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
       - wordpress-data:/var/www/html
     depends_on:
@@ -164,12 +164,12 @@ services:
       - /tmp/acme_challenge:/tmp/acme_challenge
       - wordpress-data:/var/www/html/wordpress
       - nextcloud-data:/var/www/html/nextcloud
-    #depends_on:
+    depends_on:
     #  - adminer
     #  - odoo
-    #  - wordpress
+      - wordpress
     #  - gitea
-    #  - nextcloud
+      - nextcloud
 networks:
   app-net:
     driver: bridge
