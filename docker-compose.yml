@@ -11,7 +11,7 @@ services:
         #db_password: ${DB_PASSWORD}
         #db_port: ${POSTGRES_PORT}
         #db_pgdata: ${POSTGRES_PGDATA_DIR}
-    container_name: postgres
+    # container_name: postgres
     environment:
       - POSTGRES_USER=${POSTGRES_DB_USER}
       - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD}
@@ -32,7 +32,7 @@ services:
       start_period: 5s
   mariadb:
     image: yobasystems/alpine-mariadb
-    container_name: mariadb
+    # container_name: mariadb
     environment:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
@@ -51,7 +51,7 @@ services:
       start_period: 5s
   adminer:
     image: adminer:latest
-    container_name: adminer
+    # container_name: adminer
     restart: always
     ports:
       - ${ADMINER_PORT}:8080
@@ -61,11 +61,10 @@ services:
       - postgres
       - mariadb
   odoo:
-    image: odoo:15.0
-    container_name: odoo
+    image: odoo:16
+    # container_name: odoo
     environment:
       - HOST=postgres
-      #- PORT=${POSTGRES_PORT}
       - USER=${POSTGRES_DB_USER}
       - PASSWORD=${POSTGRES_DB_PASSWORD}
     restart: always
@@ -83,7 +82,7 @@ services:
         condition: service_healthy
   gitea:
     image: gitea/gitea:1.19.0
-    container_name: gitea
+    # container_name: gitea
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -107,7 +106,7 @@ services:
         condition: service_healthy
   nextcloud:
     image: nextcloud:fpm-alpine
-    container_name: nextcloud
+    # container_name: nextcloud
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_USER=${POSTGRES_DB_USER}
@@ -119,15 +118,15 @@ services:
     networks:
       - app-net
     volumes:
-      - nextcloud-data:/var/www/html/nextcloud
-      - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/nextcloud/data
+      - nextcloud-data:/var/www/html
+      - ${NEXTCLOUD_OUTSIDE_DATA}:/var/www/html/data
     depends_on:
       postgres:
         condition: service_healthy
   wordpress:
     image: wordpress:fpm-alpine
     #image: ntninja/wordpress-postgresql # use Postgre for WordPress
-    container_name: wordpress
+    # container_name: wordpress
     environment:
       - WORDPRESS_DB_HOST=mariadb:${MYSQL_PORT}
       - WORDPRESS_DB_USER=${DB_USER}
@@ -140,9 +139,9 @@ services:
     networks:
       - app-net
     volumes:
-      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wordpress/wp-config.php
-      - ${WP_OUTSIDE_CONTENT}:/var/www/html/wordpress/wp-content
-      - wordpress-data:/var/www/html/wordpress
+      - ${WP_OUTSIDE_CONFIG}:/var/www/html/wp-config.php
+      - ${WP_OUTSIDE_CONTENT}:/var/www/html/wp-content
+      - wordpress-data:/var/www/html
     depends_on:
       mariadb:
         condition: service_healthy
@@ -152,7 +151,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
-    container_name: nginx-proxy
+    # container_name: nginx-proxy
     restart: always
     ports:
       - 80:80
