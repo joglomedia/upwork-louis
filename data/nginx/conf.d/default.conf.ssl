@@ -1,6 +1,6 @@
 # http://nginx.org/en/docs/http/ngx_http_upstream_module.html#upstream
 upstream adminer.app {
-    server adminer:8081;
+    server adminer:8080;
 }
 
 upstream odoo.app {
@@ -155,13 +155,6 @@ server {
 
     location / {
         try_files $uri $uri/ /index.php$request_uri;
-    }
-
-    # Rule borrowed from `.htaccess` to handle Microsoft DAV clients
-    location = / {
-        if ( $http_user_agent ~ ^DavClnt ) {
-            return 302 /remote.php/webdav/$is_args$args;
-        }
     }
 
     ## Pass the PHP scripts to FastCGI server listening on Unix socket.
