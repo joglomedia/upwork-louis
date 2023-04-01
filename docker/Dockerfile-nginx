@@ -7,3 +7,4 @@ FROM nginx:stable-alpine
 
 RUN mkdir -p /var/www/html/wordpress
 RUN mkdir -p /var/www/html/nextcloud
+RUN chown -hR nginx:nginx /var/www/html/

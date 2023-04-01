@@ -2,20 +2,24 @@ version: "3.9"
 services:
   odoo:
     image: odoo:16
+    container_name: odoo
+    restart: always
     depends_on:
       - postgres
     environment:
       - HOST=postgres
-      - USER=pgdbuser
+      - USER=odoo
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
     networks:
       - dclocal-net
-    volumes:
-      - ./data/odoo:/var/lib/odoo
+    #volumes:
+    #  - ./webdata/odoo:/var/lib/odoo
   gitea:
     image: gitea/gitea:1.19.0
+    container_name: gitea
+    restart: always
     depends_on:
       - postgres
     environment:
@@ -24,7 +28,7 @@ services:
       - GITEA__database__DB_TYPE=postgres
       - GITEA__database__HOST=postgres:5432
       - GITEA__database__NAME=gitea
-      - GITEA__database__USER=pgdbuser
+      - GITEA__database__USER=odoo
       - GITEA__database__PASSWD=passwd12345
     ports:
       - 3000:3000
@@ -32,16 +36,18 @@ services:
     networks:
       - dclocal-net
     volumes:
-      - ./data/gitea/data:/data
+      - ./webdata/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
   nextcloud:
     image: nextcloud:fpm-alpine
+    container_name: nextcloud
+    restart: always
     depends_on:
       - postgres
     environment:
       - POSTGRES_HOST=postgres
-      - POSTGRES_USER=pgdbuser
+      - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_DB=nextcloud
     ports:
@@ -49,9 +55,11 @@ services:
     networks:
       - dclocal-net
     volumes:
-      - ./data/nextcloud:/var/www/html
+      - ./webdata/nextcloud:/var/www/html
   wordpress:
     image: wordpress:fpm-alpine
+    container_name: wordpress
+    restart: always
     depends_on:
       - mariadb
     environment:
@@ -65,12 +73,14 @@ services:
     networks:
       - dclocal-net
     volumes:
-      - ./data/wordpress:/var/www/html
-  nginx:
+      - ./webdata/wordpress:/var/www/html
+  nginx-proxy:
     #image: nginx:stable-alpine
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
+    container_name: nginx-proxy
+    restart: always
     depends_on:
       - odoo
       - wordpress
@@ -86,10 +96,12 @@ services:
       - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /tmp/acme_challenge:/tmp/acme_challenge
-      - ./data/wordpress:/var/www/html/wordpress
-      - ./data/nextcloud:/var/www/html/nextcloud
+      - ./webdata/wordpress:/var/www/html/wordpress
+      - ./webdata/nextcloud:/var/www/html/nextcloud
   adminer:
     image: adminer:latest
+    container_name: adminer
+    restart: always
     depends_on:
       - postgres
       - mariadb
@@ -98,17 +110,25 @@ services:
     networks:
       - dclocal-net
   postgres:
-    image: postgres:15-alpine
+    #image: postgres:15-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
+    container_name: postgres
+    restart: always
     environment:
       - POSTGRES_DB=postgres
-      - POSTGRES_USER=pgdbuser
+      - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
       - dclocal-net
   mariadb:
     image: yobasystems/alpine-mariadb
+    container_name: mariadb
+    restart: always
     environment:
       - MYSQL_USER=mdbuser
       - MYSQL_PASSWORD=passwd12345

@@ -12,11 +12,11 @@ upstream gitea.app {
 }
 
 upstream nextcloud.fpm {
-    server nextcloud:9001;
+    server nextcloud:9000;
 }
 
 upstream wordpress.fpm {
-    server wordpress:9000;
+    server wordpress:9001;
 }
 
 server {
@@ -144,7 +144,7 @@ server {
     server_name nc.dc.masedi.net;
 
     root /var/www/html/nextcloud;
-    index index.php index.html /index.php$request_uri;
+    index index.php;
 
     access_log /var/log/nginx/nc-access.log;
     error_log /var/log/nginx/nc-error.log;
@@ -174,6 +174,7 @@ server {
         include /etc/nginx/conf.d/fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $fastcgi_path_info;
     }
 
     location ~ /dbadmin(.*)$ {
@@ -220,6 +221,7 @@ server {
         include /etc/nginx/conf.d/fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $fastcgi_path_info;
     }
 
     # Add a trailing slash to /wp-admin
