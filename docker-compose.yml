@@ -113,7 +113,7 @@ services:
     #image: postgres:15-alpine
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-nginx
+      dockerfile: ./docker/Dockerfile-postgres
     container_name: postgres
     restart: always
     environment:
