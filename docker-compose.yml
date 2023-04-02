@@ -87,12 +87,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
-    #  args:
-    #    ngx_uid: 82
-    #    ngx_gid: 82
-    #environment:
-    #  - NGINX_UID=82
-    #  - NGINX_GID=82
+      args:
+        ngx_uid: 82
+        ngx_gid: 82
+    environment:
+      - NGINX_UID=82
+      - NGINX_GID=82
     container_name: nginx-proxy
     restart: always
     depends_on:
