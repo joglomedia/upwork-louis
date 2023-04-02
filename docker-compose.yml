@@ -135,7 +135,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=gitea; nextcloud
+      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
