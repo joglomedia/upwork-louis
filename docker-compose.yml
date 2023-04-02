@@ -28,7 +28,7 @@ services:
       - GITEA__database__DB_TYPE=postgres
       - GITEA__database__HOST=postgres:5432
       - GITEA__database__NAME=gitea
-      - GITEA__database__USER=odoo
+      - GITEA__database__USER=gitea
       - GITEA__database__PASSWD=passwd12345
     ports:
       - 3000:3000
@@ -47,9 +47,9 @@ services:
       - postgres
     environment:
       - POSTGRES_HOST=postgres
-      - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=passwd12345
     ports:
       - 9000:9000
     networks:
@@ -69,7 +69,7 @@ services:
       - WORDPRESS_DB_NAME=wpdb890
       - WORDPRESS_TABLE_PREFIX=wpx_
     ports:
-      - 9001:9000
+      - 9002:9000
     networks:
       - dclocal-net
     volumes:
@@ -79,6 +79,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile-nginx
+      args:
+        ngx_uid: 82
+        ngx_gid: 82
+    environment:
+      - NGINX_UID=82
+      - NGINX_GID=82
     container_name: nginx-proxy
     restart: always
     depends_on:
@@ -117,17 +123,17 @@ services:
     container_name: postgres
     restart: always
     environment:
-      - POSTGRES_DB=odoo
-      - POSTGRES_USER=odoo
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=odoo:odoo:passwd12345; gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
       - dclocal-net
     #command: postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c random_page_cost=1.0
     healthcheck:
-      test: psql -U odoo -d odoo -c "SELECT 1;"
+      test: psql -U postgres -d postgres -c "SELECT 1;"
       interval: 5s
       timeout: 5s
       retries: 10
