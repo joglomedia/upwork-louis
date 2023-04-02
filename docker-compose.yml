@@ -135,7 +135,7 @@ services:
       - POSTGRES_DB=odoo
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=gitea:odoo:passwd12345; nextcloud:odoo:passwd12345
     ports:
       - 5432:5432
     networks:
