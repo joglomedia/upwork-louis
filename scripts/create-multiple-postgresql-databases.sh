@@ -13,14 +13,12 @@ function create_user_and_database() {
 
 	# CREATE ROLE ${MDB_ROLE} LOGIN PASSWORD '${POSTGRES_PASSWORD}';
 	psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" <<-PGSQL
-		DO
-		$do$
+		DO $$
 		BEGIN
 			IF NOT EXISTS (SELECT * FROM pg_catalog.pg_roles WHERE rolname = '${MDB_ROLE}') THEN 
 				CREATE ROLE ${MDB_ROLE} LOGIN PASSWORD '${MDB_PASSWORD}';
 			END IF;
-		END
-		$do$;
+		END $$;
 		CREATE DATABASE ${MDB_DB_NAME};
 		GRANT ALL PRIVILEGES ON DATABASE ${MDB_DB_NAME} TO ${MDB_ROLE};
 PGSQL

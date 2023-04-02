@@ -15,7 +15,7 @@ services:
     networks:
       - dclocal-net
     volumes:
-      - ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
+      #- ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
       - ./webdata/odoo/addons:/mnt/extra-addons
     #  - ./webdata/odoo:/var/lib/odoo
   gitea:
