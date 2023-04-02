@@ -2,4 +2,4 @@ FROM wordpress:fpm-alpine
 
 RUN apk add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
 
-EXPOSE 9001
+EXPOSE 9002

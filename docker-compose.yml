@@ -56,7 +56,7 @@ services:
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=passwd12345
     ports:
-      - 8081:9000
+      - 8081:9001
     networks:
       - dclocal-net
     volumes:
@@ -77,7 +77,7 @@ services:
       - WORDPRESS_DB_NAME=wpdb890
       - WORDPRESS_TABLE_PREFIX=wpx_
     ports:
-      - 8082:9000
+      - 8082:9002
     networks:
       - dclocal-net
     volumes:
@@ -135,7 +135,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=odoo:odoo:passwd12345; gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
