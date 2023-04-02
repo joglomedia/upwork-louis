@@ -132,7 +132,7 @@ services:
     container_name: postgres
     restart: always
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=odoo
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
