@@ -8,14 +8,14 @@ services:
       - postgres
     environment:
       - HOST=postgres
-      - USER=odoo
+      - USER=pguser
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
     networks:
       - dclocal-net
     volumes:
-      #- ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
+      - ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
       - ./webdata/odoo/addons:/mnt/extra-addons
     #  - ./webdata/odoo:/var/lib/odoo
   gitea:
@@ -132,8 +132,8 @@ services:
     container_name: postgres
     restart: always
     environment:
-      - POSTGRES_DB=odoo
-      - POSTGRES_USER=odoo
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=pguser
       - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_MULTIPLE_DATABASES=gitea:passwd12345; nextcloud:passwd12345
     ports:
