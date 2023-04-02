@@ -15,7 +15,7 @@ services:
     networks:
       - dclocal-net
     volumes:
-      - ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
+    #  - ./data/odoo/odoo.conf:/etc/odoo/odoo.conf
       - ./webdata/odoo/addons:/mnt/extra-addons
     #  - ./webdata/odoo:/var/lib/odoo
   gitea:
@@ -133,9 +133,9 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=postgres
-      - POSTGRES_USER=odoo
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=odoo:odoo:passwd12345; gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
