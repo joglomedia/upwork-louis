@@ -1,12 +1,12 @@
 FROM nginx:stable-alpine
 
-ARG ngx_uid
-ARG ngx_gid
+#ARG ngx_uid
+#ARG ngx_gid
 
-ENV NGINX_UID=${ngx_uid}
-ENV NGINX_GID=${ngx_gid}
+#ENV NGINX_UID=${ngx_uid}
+#ENV NGINX_GID=${ngx_gid}
 
-RUN apk add shadow && usermod -u ${NGINX_UID} -o nginx && groupmod -g ${NGINX_GID} -o nginx
+#RUN apk add shadow && usermod -u ${ngx_uid} -o nginx && groupmod -g ${ngx_gid} -o nginx
 
 #RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 #COPY ./data/nginx/config/nginx.conf /etc/nginx/conf.d/
@@ -15,4 +15,5 @@ RUN apk add shadow && usermod -u ${NGINX_UID} -o nginx && groupmod -g ${NGINX_GI
 
 RUN mkdir -p /var/www/html/wordpress
 RUN mkdir -p /var/www/html/nextcloud
-RUN chown -hR ${NGINX_UID}:${NGINX_GID} /var/www/html
+#RUN chown -hR nginx:nginx /var/www/html
+#RUN chown -hR ${ngx_uid}:${ngx_gid} /var/www/html

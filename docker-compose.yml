@@ -5,10 +5,11 @@ services:
     container_name: odoo
     restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - HOST=postgres
-      - USER=odoo
+      - USER=postgres
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
@@ -21,7 +22,8 @@ services:
     container_name: gitea
     restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -40,28 +42,36 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
   nextcloud:
-    image: nextcloud:fpm-alpine
+    #image: nextcloud:fpm-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nextcloud
     container_name: nextcloud
     restart: always
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=nextcloud
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=passwd12345
     ports:
-      - 9000:9000
+      - 8081:9000
     networks:
       - dclocal-net
     volumes:
       - ./webdata/nextcloud:/var/www/html
   wordpress:
-    image: wordpress:fpm-alpine
+    #image: wordpress:fpm-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-wordpress
     container_name: wordpress
     restart: always
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     environment:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_USER=mdbuser
@@ -69,22 +79,22 @@ services:
       - WORDPRESS_DB_NAME=wpdb890
       - WORDPRESS_TABLE_PREFIX=wpx_
     ports:
-      - 9002:9000
+      - 8082:9000
     networks:
       - dclocal-net
     volumes:
       - ./webdata/wordpress:/var/www/html
   nginx-proxy:
-    #image: nginx:stable-alpine
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-nginx
-      args:
-        ngx_uid: 82
-        ngx_gid: 82
-    environment:
-      - NGINX_UID=82
-      - NGINX_GID=82
+    image: nginx:stable-alpine
+    #build:
+    #  context: .
+    #  dockerfile: ./docker/Dockerfile-nginx
+    #  args:
+    #    ngx_uid: 82
+    #    ngx_gid: 82
+    #environment:
+    #  - NGINX_UID=82
+    #  - NGINX_GID=82
     container_name: nginx-proxy
     restart: always
     depends_on:
@@ -102,8 +112,9 @@ services:
       - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /tmp/acme_challenge:/tmp/acme_challenge
-      - ./webdata/wordpress:/var/www/html/wordpress
-      - ./webdata/nextcloud:/var/www/html/nextcloud
+      - ./webdata/:/var/www/html/
+      #- ./webdata/wordpress:/var/www/html/wordpress
+      #- ./webdata/nextcloud:/var/www/html/nextcloud
   adminer:
     image: adminer:latest
     container_name: adminer
@@ -126,7 +137,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=passwd12345
-      - POSTGRES_MULTIPLE_DATABASES=odoo:odoo:passwd12345; gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
+      - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
       - 5432:5432
     networks:
