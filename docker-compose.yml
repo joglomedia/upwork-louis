@@ -42,10 +42,10 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
   nextcloud:
-    #image: nextcloud:fpm-alpine
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-nextcloud
+    image: nextcloud:fpm-alpine
+    #build:
+    #  context: .
+    #  dockerfile: ./docker/Dockerfile-nextcloud
     container_name: nextcloud
     restart: always
     depends_on:
@@ -62,10 +62,10 @@ services:
     volumes:
       - ./webdata/nextcloud:/var/www/html
   wordpress:
-    #image: wordpress:fpm-alpine
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-wordpress
+    image: wordpress:fpm-alpine
+    #build:
+    #  context: .
+    #  dockerfile: ./docker/Dockerfile-wordpress
     container_name: wordpress
     restart: always
     depends_on:
