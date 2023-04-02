@@ -12,11 +12,11 @@ upstream gitea.app {
 }
 
 upstream nextcloud.fpm {
-    server nextcloud:9000;
+    server nextcloud:8081;
 }
 
 upstream wordpress.fpm {
-    server wordpress:9002;
+    server wordpress:8082;
 }
 
 server {

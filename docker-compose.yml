@@ -8,7 +8,7 @@ services:
       - postgres
     environment:
       - HOST=postgres
-      - USER=postgres
+      - USER=odoo
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
@@ -56,7 +56,7 @@ services:
       - POSTGRES_USER=nextcloud
       - POSTGRES_PASSWORD=passwd12345
     ports:
-      - 8081:9001
+      - 8081:9000
     networks:
       - dclocal-net
     volumes:
@@ -77,16 +77,16 @@ services:
       - WORDPRESS_DB_NAME=wpdb890
       - WORDPRESS_TABLE_PREFIX=wpx_
     ports:
-      - 8082:9002
+      - 8082:9000
     networks:
       - dclocal-net
     volumes:
       - ./webdata/wordpress:/var/www/html
   nginx-proxy:
-    image: nginx:stable-alpine
-    #build:
-    #  context: .
-    #  dockerfile: ./docker/Dockerfile-nginx
+    #image: nginx:stable-alpine
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-nginx
     #  args:
     #    ngx_uid: 82
     #    ngx_gid: 82
@@ -133,7 +133,7 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
