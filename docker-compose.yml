@@ -9,7 +9,7 @@ services:
         condition: service_healthy
     environment:
       - HOST=postgres
-      - USER=postgres
+      - USER=odoo
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
@@ -135,7 +135,7 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=passwd12345
       - POSTGRES_MULTIPLE_DATABASES=gitea:gitea:passwd12345; nextcloud:nextcloud:passwd12345
     ports:
