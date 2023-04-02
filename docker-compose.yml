@@ -8,7 +8,7 @@ services:
       - postgres
     environment:
       - HOST=postgres
-      - USER=odoo
+      - USER=postgres
       - PASSWORD=passwd12345
     ports:
       - 8069:8069
