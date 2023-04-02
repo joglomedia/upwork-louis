@@ -5,8 +5,7 @@ services:
     container_name: odoo
     restart: always
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       - HOST=postgres
       - USER=postgres
@@ -24,8 +23,7 @@ services:
     container_name: gitea
     restart: always
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       - USER_UID=1000
       - USER_GID=1000
@@ -51,8 +49,7 @@ services:
     container_name: nextcloud
     restart: always
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=nextcloud
@@ -72,8 +69,7 @@ services:
     container_name: wordpress
     restart: always
     depends_on:
-      mariadb:
-        condition: service_healthy
+      - mariadb
     environment:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_USER=mdbuser
@@ -144,13 +140,6 @@ services:
       - 5432:5432
     networks:
       - dclocal-net
-    #command: postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c random_page_cost=1.0
-    healthcheck:
-      test: psql -U postgres -d postgres -c "SELECT 1;"
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
   mariadb:
     image: yobasystems/alpine-mariadb
     container_name: mariadb
@@ -164,12 +153,6 @@ services:
       - 3306:3306
     networks:
       - dclocal-net
-    healthcheck:
-      test: mysql -h mariadb -u mdbuser -ppasswd12345 --execute "SHOW DATABASES;"
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
 networks:
   dclocal-net:
     driver: bridge
