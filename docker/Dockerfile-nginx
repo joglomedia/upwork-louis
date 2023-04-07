@@ -6,7 +6,8 @@ ARG ngx_gid
 ENV NGINX_UID=${ngx_uid}
 ENV NGINX_GID=${ngx_gid}
 
-RUN apk add shadow && usermod -u ${ngx_uid} -o nginx && groupmod -g ${ngx_gid} -o nginx
+#RUN apk add shadow && usermod -u ${ngx_uid} -o nginx && groupmod -g ${ngx_gid} -o nginx
+RUN usermod -u ${ngx_uid} -o nginx && groupmod -g ${ngx_gid} -o nginx
 
 #RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 #COPY ./data/nginx/config/nginx.conf /etc/nginx/conf.d/
