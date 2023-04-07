@@ -42,7 +42,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
   nextcloud:
-    image: nextcloud:fpm-alpine
+    image: nextcloud:production-fpm
     #build:
     #  context: .
     #  dockerfile: ./docker/Dockerfile-nextcloud
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./webdata/nextcloud:/var/www/html
   wordpress:
-    image: wordpress:fpm-alpine
+    image: wordpress:php8.2-fpm
     #build:
     #  context: .
     #  dockerfile: ./docker/Dockerfile-wordpress
